@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './LoginPopup.css';
 import { assets } from '../../assets/assets';
+import axios from 'axios';
 
 const LoginPopup = ({ setShowLogin, setLoggedInUser }) => {
   const [currState, setCurrState] = useState("Login");
@@ -9,41 +10,61 @@ const LoginPopup = ({ setShowLogin, setLoggedInUser }) => {
     email: '',
     password: ''
   });
-  const [tempData, setTempData] = useState(null);
   const [message, setMessage] = useState("");
 
-  const handleSignUp = (e) => {
+  // Backend URL (adjust as needed)
+  const BASE_URL = "http://localhost:5000/api/auth";
+
+  // Handle Sign Up
+  const handleSignUp = async (e) => {
     e.preventDefault();
     if (userDetails.name && userDetails.email && userDetails.password) {
-      setTempData(userDetails); // Save data temporarily
-      setMessage("Account created successfully! You can now log in.");
-      setCurrState("Login");
-      setUserDetails({ name: '', email: '', password: '' }); // Clear fields
+      try {
+        const response = await axios.post(`${BASE_URL}/register`, {
+          name: userDetails.name,
+          email: userDetails.email,
+          password: userDetails.password,
+        });
+        setMessage("Account created successfully! You can now log in.");
+        setCurrState("Login");
+        setUserDetails({ name: '', email: '', password: '' }); // Clear fields
+      } catch (err) {
+        setMessage(err.response?.data?.message || "Failed to register. Please try again.");
+      }
     } else {
       setMessage("Please fill in all the fields.");
     }
   };
 
-  const handleLogin = (e) => {
+  // Handle Login
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (tempData && userDetails.email === tempData.email && userDetails.password === tempData.password) {
-      setLoggedInUser(tempData); // Pass user data to parent
-      setMessage(`Welcome back, ${tempData.name}!`);
-      setShowLogin(false); // Close popup
+    if (userDetails.email && userDetails.password) {
+      try {
+        const response = await axios.post(`${BASE_URL}/login`, {
+          email: userDetails.email,
+          password: userDetails.password,
+        });
+        setLoggedInUser(response.data); // Pass user data to parent
+        setMessage(`Welcome back, ${response.data.name}!`);
+        setShowLogin(false); // Close popup
+      } catch (err) {
+        setMessage(err.response?.data?.message || "Incorrect email or password.");
+      }
     } else {
-      setMessage("Incorrect email or password.");
+      setMessage("Please fill in all the fields.");
     }
   };
 
   const handleChange = (e) => {
     setUserDetails({
       ...userDetails,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   return (
-    <div className='login-popup'>
+    <div className="login-popup">
       <form className="login-popup-container" onSubmit={currState === "Login" ? handleLogin : handleSignUp}>
         <div className="login-popup-title">
           <h2>{currState}</h2>
