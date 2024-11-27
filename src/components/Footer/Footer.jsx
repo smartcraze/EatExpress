@@ -33,7 +33,15 @@ const Footer = () => {
         </div>
       </div>
       <hr />
-      <p className="footer-copyright">Copyright 2024 HungerBird.com - All Right Reserved.</p>
+
+       {/* <p className="footer-copyright">Made with .</p> */}
+      <p className="footer-copyright">
+          Made with{" "}
+          <span role="img" aria-label="Love">
+            ❤️
+          </span>{" "}
+          by RASHMI DUBEY
+        </p>
     </div>
   )
 }
