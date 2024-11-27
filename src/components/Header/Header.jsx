@@ -5,9 +5,11 @@ const Header = () => {
   return (
     <div className='header'>
       <div className="header-contents">
-        <h2>Order your favourite food here</h2>
-        <p>Build Complete Food Ordering Website / Web App using React JS | Full Stack React JS project for students 2024</p>
-        <button>View Menu</button>
+        <h2 className="heading">Order Now, Savor Later!</h2>
+        <div className='same-line'>
+        <p className="subheading">Fast, reliable food delivery with a click of a button—hot meals, delivered fresh !!!</p>
+        <a href="#explore-menu"><button>View Menu</button></a>
+        </div>
       </div>
     </div>
   )
